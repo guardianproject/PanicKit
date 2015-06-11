@@ -24,3 +24,6 @@ proguard.cfg
 
 # Mac OS X detritus
 .DS_Store
+
+# release builds
+panickit*.jar*
