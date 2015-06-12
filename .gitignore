@@ -27,3 +27,4 @@ proguard.cfg
 
 # release builds
 panickit*.jar*
+MANIFEST.MF

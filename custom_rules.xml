@@ -13,7 +13,26 @@
     </exec>
   </target>
 
-  <target name="javadoc" description="Generate Javadocs" depends="-build-setup,-getgitdetails">
+  <target name="-create-manifest">
+    <echo message="Creating custom MANIFEST.MF" />
+    <manifest file="MANIFEST.MF">
+      <attribute name="Extension-Name" value="info.guardianproject.panic"/>
+      <attribute name="Implementation-Vendor" value="Guardian Project"/>
+      <attribute name="Implementation-Title" value="PanicKit"/>
+      <attribute name="Implementation-URL" value="https://dev.guardianproject.info/projects/panic"/>
+      <attribute name="Implementation-Git-URL" value="https://github.com/guardianproject/PanicKit"/>
+    </manifest>
+    <replaceregexp file="MANIFEST.MF"
+                   match="\nCreated-By:.*?\n"
+                   replace=""
+                   flags="m"/>
+  </target>
+
+  <target name="-pre-build"  depends="-getgitdetails,-create-manifest">
+    <echo message="running" />
+  </target>
+
+  <target name="javadoc" description="Generate Javadocs" depends="-pre-build">
     <property name="javadoc.dir" value="${out.dir}/javadoc" />
     <property name="jar.name" value="${jar.dir}/${ant.project.name}-${git.describe}-javadoc.jar" />
     <javadoc sourcepath="${source.dir}"
@@ -25,31 +44,17 @@
              linksource="true"
              doctitle="${ant.project.name}" />
     <jar destfile="${jar.name}"
+         manifest="MANIFEST.MF"
          basedir="${javadoc.dir}">
-      <manifest>
-        <attribute name="Implementation-Vendor" value="Guardian Project"/>
-        <attribute name="Implementation-Title" value="PanicKit"/>
-        <attribute name="Implementation-URL" value="https://dev.guardianproject.info/projects/panic"/>
-        <attribute name="Implementation-Version" value="${git.describe}"/>
-        <attribute name="Git-Revision" value="${git.revision}"/>
-        <attribute name="Android-SDK-Release" value="${Pkg.Revision}"/>
-        <attribute name="Android-SDK-Host-OS" value="${Archive.HostOs}"/>
-      </manifest>
     </jar>
   </target>
 
   <target name="source" description="Generate Javadocs" depends="-build-setup,-getgitdetails">
     <property name="jar.name" value="${jar.dir}/${ant.project.name}-${git.describe}-source.jar" />
     <jar destfile="${jar.name}"
+         manifest="MANIFEST.MF"
          includes="info/**"
          basedir="${source.dir}">
-      <manifest>
-        <attribute name="Implementation-Vendor" value="Guardian Project"/>
-        <attribute name="Implementation-Title" value="PanicKit"/>
-        <attribute name="Implementation-URL" value="https://dev.guardianproject.info/projects/panic"/>
-        <attribute name="Implementation-Version" value="${git.describe}"/>
-        <attribute name="Git-Revision" value="${git.revision}"/>
-      </manifest>
     </jar>
   </target>
 
@@ -69,17 +74,9 @@
     <delete file="${jar.name}"/>
     <mkdir dir="${jar.dir}" />
     <jar destfile="${jar.name}"
+         manifest="MANIFEST.MF"
          includes="info/**"
          basedir="${out.classes.absolute.dir}">
-      <manifest>
-        <attribute name="Implementation-Vendor" value="Guardian Project"/>
-        <attribute name="Implementation-Title" value="PanicKit"/>
-        <attribute name="Implementation-URL" value="https://dev.guardianproject.info/projects/panic"/>
-        <attribute name="Implementation-Version" value="${git.describe}"/>
-        <attribute name="Git-Revision" value="${git.revision}"/>
-        <attribute name="Android-SDK-Release" value="${Pkg.Revision}"/>
-        <attribute name="Android-SDK-Host-OS" value="${Archive.HostOs}"/>
-      </manifest>
     </jar>
     <if condition="${build.is.debug}">
       <else>
