@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>info.guardianproject.panic</groupId>
+  <artifactId>panic</artifactId>
+  <version>0.0</version>
+  <name>PanicKit</name>
+  <url>https://guardianproject.info/code/panic</url>
+  <description>PanicKit is a library for Android that provides multiple means to improve network security in mobile applications. It provides best practices TLS settings using the standard Android HTTP methods, HttpURLConnection and Apache HTTP Client, provides simple Tor integration, makes it easy to configure proxies for HTTP connections and `WebView` instances.</description>
+  <licenses>
+   <license>
+     <name>LGPLv2.1</name>
+     <url>https://github.com/guardianproject/PanicKit/blob/master/LICENSE.txt</url>
+   </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>guardianproject</id>
+      <name>Guardian Project</name>
+      <email>support@guardianproject.info</email>
+    </developer>
+  </developers>
+  <issueManagement>
+    <url>https://dev.guardianproject.info/projects/panic/issues</url>
+    <system>Redmine</system>
+  </issueManagement>
+  <scm>
+    <connection>scm:https://github.com/guardianproject/PanicKit.git</connection>
+    <developerConnection>scm:git@github.com:guardianproject/PanicKit.git</developerConnection>
+    <url>scm:https://github.com/guardianproject/PanicKit</url>
+  </scm>
+</project>
