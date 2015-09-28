@@ -30,11 +30,12 @@ public class PanicReceiver {
     public static boolean checkForDisconnectIntent(Activity activity) {
         boolean result = false;
         Intent intent = activity.getIntent();
-        if (TextUtils.equals(intent.getAction(), Panic.ACTION_DISCONNECT)) {
+        if (intent != null && TextUtils.equals(intent.getAction(), Panic.ACTION_DISCONNECT)) {
             result = true;
             if (TextUtils.equals(PanicUtils.getCallingPackageName(activity),
-                    getTriggerPackageName(activity)))
+                    getTriggerPackageName(activity))) {
                 setTriggerPackageName(activity, null);
+            }
         }
         return result;
     }
