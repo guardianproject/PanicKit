@@ -65,12 +65,23 @@ public class PanicReceiver {
      * app to let them know about the changes. This is done by sending an
      * {@code ACTION_DISCONNECT Intent} to the previous app, and an
      * {@code ACTION_CONNECT Intent} to the newly configured app.
+     * <p>
+     * When this is called with an {@code Activity} in the same receiver app
+     * that called the {@link Activity#startActivityForResult(Intent, int)},
+     * then it will <b>not</b> change the existing trigger app setting! For
+     * example, if the receiver app launches its Panic Config {@code Activity}.
      *
      * @param activity the {@link Activity} that received an
      *            {@link Panic.ACTION_CONNECT} {@link Intent}
      */
     public static void setTriggerPackageName(Activity activity) {
-        setTriggerPackageName(activity, PanicUtils.getCallingPackageName(activity));
+        String intentPackageName = activity.getIntent().getPackage();
+        String callingPackageName = PanicUtils.getCallingPackageName(activity);
+        if (intentPackageName == null && callingPackageName == null) {
+            return;
+        } else {
+            setTriggerPackageName(activity, callingPackageName);
+        }
     }
 
     /**
