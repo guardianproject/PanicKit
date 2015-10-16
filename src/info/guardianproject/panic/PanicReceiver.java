@@ -20,7 +20,7 @@ public class PanicReceiver {
 
     /**
      * Checks whether the provided {@link Activity} was started with the action
-     * {@link Panic.ACTION_DISCONNECT}, and if so, processes that {@link Intent}
+     * {@link Panic#ACTION_DISCONNECT}, and if so, processes that {@link Intent}
      * , removing the sending app as the panic trigger if it is currently
      * configured to be so.
      *
@@ -72,7 +72,7 @@ public class PanicReceiver {
      * example, if the receiver app launches its Panic Config {@code Activity}.
      *
      * @param activity the {@link Activity} that received an
-     *            {@link Panic.ACTION_CONNECT} {@link Intent}
+     *            {@link Panic#ACTION_CONNECT} {@link Intent}
      */
     public static void setTriggerPackageName(Activity activity) {
         String intentPackageName = activity.getIntent().getPackage();

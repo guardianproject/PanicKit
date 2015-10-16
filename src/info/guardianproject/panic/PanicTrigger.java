@@ -17,7 +17,7 @@ public class PanicTrigger {
 
     /**
      * Checks whether the provided {@link Activity} was started with the action
-     * {@link Panic.ACTION_CONNECT}, and if so, processes that {@link Intent} ,
+     * {@link Panic#ACTION_CONNECT}, and if so, processes that {@link Intent} ,
      * adding the sending app as the panic trigger.
      *
      * @param activity the {@code Activity} to check for the {@code Intent}
@@ -32,7 +32,7 @@ public class PanicTrigger {
 
     /**
      * Checks whether the provided {@link Activity} was started with the action
-     * {@link Panic.ACTION_DISCONNECT}, and if so, processes that {@link Intent}
+     * {@link Panic#ACTION_DISCONNECT}, and if so, processes that {@link Intent}
      * , removing the sending app as the panic trigger if it is currently
      * configured to be so.
      *
