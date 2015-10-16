@@ -1,6 +1,10 @@
 
-This is a framework for providing trusted connections between panic button
-apps and other apps that should be triggered by them.
+PanicKit is a collection of tools for letting panic trigger and panic receiver
+apps safely and easily connect to each other. The trigger apps are the part
+that the user will actual engage when in a panic situation. The receiver apps
+receive the trigger signal from the trigger apps when the user has initiated
+the panic response. The connections between trigger and receiver can be
+strictly enforced based on `packageName` and APK signing key.
 
 https://dev.guardianproject.info/projects/panic/wiki
 

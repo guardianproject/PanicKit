@@ -6,8 +6,8 @@
   <artifactId>panic</artifactId>
   <version>0.0</version>
   <name>PanicKit</name>
-  <url>https://guardianproject.info/code/panic</url>
-  <description>PanicKit is a library for Android that provides multiple means to improve network security in mobile applications. It provides best practices TLS settings using the standard Android HTTP methods, HttpURLConnection and Apache HTTP Client, provides simple Tor integration, makes it easy to configure proxies for HTTP connections and `WebView` instances.</description>
+  <url>https://dev.guardianproject.info/projects/panic/wiki</url>
+  <description>PanicKit is a collection of tools for letting panic trigger and panic receiver apps safely and easily connect to each other. The trigger apps are the part that the user will actual engage when in a panic situation. The receiver apps receive the trigger signal from the trigger apps when the user has initiated the panic response. The connections between trigger and receiver can be strictly enforced based on Package Name and APK signing key.</description>
   <licenses>
    <license>
      <name>LGPLv2.1</name>
