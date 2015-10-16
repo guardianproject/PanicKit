@@ -108,7 +108,7 @@ public class PanicReceiver {
             if (resInfos.size() > 0)
                 activity.startActivityForResult(intent, 0);
         }
-        if (TextUtils.isEmpty(packageName)) {
+        if (TextUtils.isEmpty(packageName) || packageName.equals(Panic.PACKAGE_NAME_DEFAULT)) {
             prefs.edit().remove(PREF_TRIGGER_PACKAGE_NAME).apply();
         } else {
             prefs.edit().putString(PREF_TRIGGER_PACKAGE_NAME, packageName).apply();
