@@ -26,7 +26,7 @@ public class PanicTrigger {
     public static boolean checkForConnectIntent(Activity activity) {
         boolean result = PanicUtils.checkForIntentWithAction(activity, Panic.ACTION_CONNECT);
         String packageName = PanicUtils.getCallingPackageName(activity);
-        addReceiver(activity, packageName);
+        addConnectedResponder(activity, packageName);
         return result;
     }
 
@@ -42,11 +42,18 @@ public class PanicTrigger {
     public static boolean checkForDisconnectIntent(Activity activity) {
         boolean result = PanicUtils.checkForIntentWithAction(activity, Panic.ACTION_DISCONNECT);
         String packageName = PanicUtils.getCallingPackageName(activity);
-        removeReceiver(activity, packageName);
+        removeConnectedResponder(activity, packageName);
         return result;
     }
 
-    public static boolean addReceiver(Context context, String packageName) {
+    /**
+     * Add a {@code packageName} to the list of connected responders.
+     *
+     * @param context
+     * @param packageName the responder to add
+     * @return whether it was successfully completed
+     */
+    public static boolean addConnectedResponder(Context context, String packageName) {
         HashSet<String> set = new HashSet<String>(getReceiverPackageNames(context));
         boolean result = set.add(packageName);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -54,7 +61,14 @@ public class PanicTrigger {
         return result;
     }
 
-    public static boolean removeReceiver(Context context, String packageName) {
+    /**
+     * Remove a {@code packageName} from the list of connected responders.
+     *
+     * @param context
+     * @param packageName the responder to remove
+     * @return whether it was successfully completed
+     */
+    public static boolean removeConnectedResponder(Context context, String packageName) {
         HashSet<String> set = new HashSet<String>(getReceiverPackageNames(context));
         boolean result = set.remove(packageName);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
