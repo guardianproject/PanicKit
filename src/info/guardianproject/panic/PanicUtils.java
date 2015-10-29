@@ -3,10 +3,13 @@ package info.guardianproject.panic;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
 public class PanicUtils {
+
+    static final Intent triggerIntent = new Intent(Panic.ACTION_TRIGGER);
 
     static String getCallingPackageName(Activity activity) {
         // getCallingPackage() was unstable until android-18, use this

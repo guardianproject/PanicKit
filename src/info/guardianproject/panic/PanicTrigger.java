@@ -141,4 +141,37 @@ public class PanicTrigger {
         }
         return connectedAndInstalled;
     }
+
+    /**
+     * Send a basic {@link Panic#ACTION_TRIGGER} {@link Intent} to all
+     * configured panic receivers.  See {@link #sendTrigger(Activity, Intent)}
+     * if you want to use a custom {@code Intent} that can include things
+     * like a text message, email addresses, phone numbers, etc.
+     */
+    public static void sendTrigger(Activity activity) {
+        sendTrigger(activity, PanicUtils.triggerIntent);
+    }
+
+    /**
+     * Send the {@link Intent} to all configured panic receivers.  It must have
+     * an {@code action} of {@link Panic#ACTION_TRIGGER} or a
+     * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
+     * include things like a text message, email addresses, phone numbers, etc.
+     * which a panic receiver app can use to send the message.
+     */
+    public static void sendTrigger(Activity activity, Intent intent) {
+        if (!Panic.ACTION_TRIGGER.equals(intent.getAction())) {
+            throw new IllegalArgumentException("The provided Intent must have an action of Panic.ACTION_TRIGGER!");
+        }
+        // Activitys
+        for (String packageName : getResponderActivities(activity)) {
+            intent.setPackage(packageName);
+            activity.startActivityForResult(intent, 0);
+        }
+        //Services
+        for (String packageName : getResponderServices(activity)) {
+            intent.setPackage(packageName);
+            activity.startService(intent);
+        }
+    }
 }
