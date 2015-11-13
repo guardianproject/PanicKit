@@ -1,7 +1,6 @@
 package info.guardianproject.panic;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -81,7 +80,8 @@ public class PanicTrigger {
      * Get the {@link Set} of {@code packageNames} of all {@link Activity}s that respond to
      * {@link Panic#ACTION_TRIGGER}.
      *
-     * @see #getResponderServices(Context) to get the {@link Service}s
+     * @see #getResponderServices(Context) to get the {@link android.app.Service}s
+     * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
     public static Set<String> getResponderActivities(Context context) {
         final PackageManager pm = context.getPackageManager();
@@ -94,10 +94,35 @@ public class PanicTrigger {
     }
 
     /**
-     * Get the {@link Set} of {@code packageNames} of all {@link Service}s that respond to
-     * {@link Panic#ACTION_TRIGGER}.
+     * Get the {@link Set} of {@code packageNames} of all
+     * {@link android.content.BroadcastReceiver}s that respond to
+     * {@link Panic#ACTION_TRIGGER}.  Unlike with {@link android.app.Service}s and
+     * {@link Activity}s, a {@code BroadcastReceiver} cannot verify which app
+     * sent this {@link Intent} to it.
+     * <p/>
+     * {@link android.content.BroadcastReceiver}s are not able to verify which app sent this.
      *
      * @see #getResponderActivities(Context) to get the {@link Activity}s
+     * @see #getResponderServices(Context) to get the {@link android.app.Service}s
+     */
+    public static Set<String> getResponderBroadcastReceivers(Context context) {
+        final PackageManager pm = context.getPackageManager();
+        List<ResolveInfo> receiversList = pm.queryBroadcastReceivers(PanicUtils.TRIGGER_INTENT, 0);
+        Set<String> broadcastReceivers = new HashSet<String>();
+        for (ResolveInfo resInfo : receiversList) {
+            broadcastReceivers.add(resInfo.activityInfo.packageName);
+        }
+        return broadcastReceivers;
+    }
+
+    /**
+     * Get the {@link Set} of {@code packageNames} of all {@link android.app.Service}s
+     * that respond to {@link Panic#ACTION_TRIGGER}.
+     * <p/>
+     * {@link android.app.Service}s are not able to verify which app sent this.
+     *
+     * @see #getResponderActivities(Context) to get the {@link Activity}s
+     * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
     public static Set<String> getResponderServices(Context context) {
         final PackageManager pm = context.getPackageManager();
@@ -110,20 +135,25 @@ public class PanicTrigger {
     }
 
     /**
-     * Get the {@link Set} of all {@code packageNames} of any {@link Activity}s
-     * or {@link Service}s that respond to {@link Panic#ACTION_TRIGGER}
-     * {@link Intent}s.
+     * Get the {@link Set} of all {@code packageNames} of any {@link Activity}s,
+     * {@link android.content.BroadcastReceiver}s, or {@link android.app.Service}s
+     * that respond to {@link Panic#ACTION_TRIGGER} {@link Intent}s.
+     *
+     * @see #getResponderActivities(Context) to get the {@link Activity}s
+     * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
+     * @see #getResponderServices(Context) to get the {@link android.app.Service}s
      */
     public static Set<String> getAllResponders(Context context) {
         List<String> packageNames = new ArrayList<String>(getResponderActivities(context));
+        packageNames.addAll(getResponderBroadcastReceivers(context));
         packageNames.addAll(getResponderServices(context));
         return new HashSet<String>(packageNames);
     }
 
     /**
      * Get the {@link Set} of {@code packageNames} of any {@link Activity}s or
-     * {@link Service}s that respond to {@link Panic#ACTION_TRIGGER} and have
-     * been manually connected by the user to this app.
+     * {@link android.app.Service}s that respond to {@link Panic#ACTION_TRIGGER}
+     * and have been manually connected by the user to this app.
      *
      * @see #checkForConnectIntent(Activity)
      * @see #checkForDisconnectIntent(Activity)
@@ -168,6 +198,13 @@ public class PanicTrigger {
      * configured panic receivers.  See {@link #sendTrigger(Activity, Intent)}
      * if you want to use a custom {@code Intent} that can include things
      * like a text message, email addresses, phone numbers, etc.
+     * <p/>
+     * Only the receiving {@link Activity}s will be able to verify which app sent this,
+     * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
+     * will not.
+     *
+     * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
+     *                                  {@code Intent}
      */
     public static void sendTrigger(Activity activity) {
         sendTrigger(activity, PanicUtils.TRIGGER_INTENT);
@@ -179,6 +216,10 @@ public class PanicTrigger {
      * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
      * include things like a text message, email addresses, phone numbers, etc.
      * which a panic receiver app can use to send the message.
+     * <p/>
+     * Only the receiving {@link Activity}s will be able to verify who sent this,
+     * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
+     * will not.
      *
      * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
      *                                  {@code Intent}
@@ -191,6 +232,11 @@ public class PanicTrigger {
         for (String packageName : getResponderActivities(activity)) {
             intent.setPackage(packageName);
             activity.startActivityForResult(intent, 0);
+        }
+        // BroadcastReceivers
+        for (String packageName : getResponderBroadcastReceivers(activity)) {
+            intent.setPackage(packageName);
+            activity.sendBroadcast(intent);
         }
         //Services
         for (String packageName : getResponderServices(activity)) {
