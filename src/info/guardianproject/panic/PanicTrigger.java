@@ -115,7 +115,7 @@ public class PanicTrigger {
      * {@link Intent}s.
      */
     public static Set<String> getAllResponders(Context context) {
-        List<String> packageNames = new ArrayList<>(getResponderActivities(context));
+        List<String> packageNames = new ArrayList<String>(getResponderActivities(context));
         packageNames.addAll(getResponderServices(context));
         return new HashSet<String>(packageNames);
     }
@@ -130,7 +130,7 @@ public class PanicTrigger {
      */
     public static Set<String> getConnectedResponders(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS, SHARED_PREFS_MODE);
-        Set<String> connectedAndInstalled = new HashSet<>();
+        Set<String> connectedAndInstalled = new HashSet<String>();
         Set<String> all = getAllResponders(context);
         // present in the prefs means it has been connected
         for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
