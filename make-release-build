@@ -21,6 +21,15 @@ faketime -f "$TIMESTAMP" ant release-all
 
 jarname=panic-$(git describe)
 rm -f ${jarname}*.asc
-for f in ${jarname}*.*; do
-    gpg --armor --detach-sign $f
-done
+
+if which gpg > /dev/null; then
+    if [ -z "`gpg --list-secret-keys`" ]; then
+        echo "No GPG secret keys found, not signing APK"
+    else
+        for f in ${jarname}*.*; do
+            gpg --armor --detach-sign $f
+        done
+    fi
+else
+    echo "gpg not found, not signing APK"
+fi
