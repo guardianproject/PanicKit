@@ -1,4 +1,3 @@
-
 package info.guardianproject.panic;
 
 import android.app.Activity;
@@ -9,7 +8,7 @@ import android.util.Log;
 
 public class PanicUtils {
 
-    static final Intent triggerIntent = new Intent(Panic.ACTION_TRIGGER);
+    static final Intent TRIGGER_INTENT = new Intent(Panic.ACTION_TRIGGER);
 
     static String getCallingPackageName(Activity activity) {
         // getCallingPackage() was unstable until android-18, use this
@@ -32,5 +31,10 @@ public class PanicUtils {
             return true;
         else
             return false;
+    }
+
+    static void throwNotTriggerIntent() {
+        throw new IllegalArgumentException("The provided Intent must have an action of "
+                + Panic.ACTION_TRIGGER);
     }
 }

@@ -85,7 +85,7 @@ public class PanicTrigger {
      */
     public static Set<String> getResponderActivities(Context context) {
         final PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> activitiesList = pm.queryIntentActivities(PanicUtils.triggerIntent, 0);
+        List<ResolveInfo> activitiesList = pm.queryIntentActivities(PanicUtils.TRIGGER_INTENT, 0);
         Set<String> activities = new HashSet<String>();
         for (ResolveInfo resInfo : activitiesList) {
             activities.add(resInfo.activityInfo.packageName);
@@ -101,7 +101,7 @@ public class PanicTrigger {
      */
     public static Set<String> getResponderServices(Context context) {
         final PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> servicesList = pm.queryIntentServices(PanicUtils.triggerIntent, 0);
+        List<ResolveInfo> servicesList = pm.queryIntentServices(PanicUtils.TRIGGER_INTENT, 0);
         Set<String> services = new HashSet<String>();
         for (ResolveInfo resInfo : servicesList) {
             services.add(resInfo.serviceInfo.packageName);
@@ -149,7 +149,7 @@ public class PanicTrigger {
      * like a text message, email addresses, phone numbers, etc.
      */
     public static void sendTrigger(Activity activity) {
-        sendTrigger(activity, PanicUtils.triggerIntent);
+        sendTrigger(activity, PanicUtils.TRIGGER_INTENT);
     }
 
     /**
@@ -158,10 +158,13 @@ public class PanicTrigger {
      * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
      * include things like a text message, email addresses, phone numbers, etc.
      * which a panic receiver app can use to send the message.
+     *
+     * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
+     *                                  {@code Intent}
      */
     public static void sendTrigger(Activity activity, Intent intent) {
-        if (!Panic.ACTION_TRIGGER.equals(intent.getAction())) {
-            throw new IllegalArgumentException("The provided Intent must have an action of Panic.ACTION_TRIGGER!");
+        if (!Panic.isTriggerIntent(intent)) {
+            PanicUtils.throwNotTriggerIntent();
         }
         // Activitys
         for (String packageName : getResponderActivities(activity)) {
