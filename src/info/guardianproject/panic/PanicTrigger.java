@@ -143,6 +143,27 @@ public class PanicTrigger {
     }
 
     /**
+     * Get all of the responders that are able to make a full connection using
+     * {@link Panic#ACTION_CONNECT}, which is used to configure the response an
+     * app makes.  For destructive responses, it is essential that the trigger
+     * and responder are connected in order to prevent random apps from making
+     * responders destroy things.  Apps can also only respond to
+     * {@link Panic#ACTION_TRIGGER} with a non-destructive response which does
+     * not require the apps to connect or the user to configure anything.
+     */
+    public static Set<String> getRespondersThatCanConnect(Context context) {
+        List<ResolveInfo> connectInfos = context.getPackageManager().queryIntentActivities(
+                PanicUtils.CONNECT_INTENT, 0);
+        final Set<String> connectPackageNameList = new HashSet<String>(connectInfos.size());
+        for (ResolveInfo resolveInfo : connectInfos) {
+            if (resolveInfo.activityInfo == null)
+                continue;
+            connectPackageNameList.add(resolveInfo.activityInfo.packageName);
+        }
+        return connectPackageNameList;
+    }
+
+    /**
      * Send a basic {@link Panic#ACTION_TRIGGER} {@link Intent} to all
      * configured panic receivers.  See {@link #sendTrigger(Activity, Intent)}
      * if you want to use a custom {@code Intent} that can include things

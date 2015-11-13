@@ -9,6 +9,7 @@ import android.util.Log;
 public class PanicUtils {
 
     static final Intent TRIGGER_INTENT = new Intent(Panic.ACTION_TRIGGER);
+    static final Intent CONNECT_INTENT = new Intent(Panic.ACTION_CONNECT);
 
     static String getCallingPackageName(Activity activity) {
         // getCallingPackage() was unstable until android-18, use this
