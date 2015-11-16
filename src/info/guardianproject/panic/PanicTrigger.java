@@ -81,6 +81,7 @@ public class PanicTrigger {
      * {@link Panic#ACTION_TRIGGER}.
      *
      * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder {@code Activity}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
@@ -104,6 +105,7 @@ public class PanicTrigger {
      * {@link android.content.BroadcastReceiver}s are not able to verify which app sent this.
      *
      * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder {@code BroadcastReceiver}s
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
      */
@@ -124,6 +126,7 @@ public class PanicTrigger {
      * {@link android.app.Service}s are not able to verify which app sent this.
      *
      * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder {@code Service}s
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
@@ -143,6 +146,7 @@ public class PanicTrigger {
      * that respond to {@link Panic#ACTION_TRIGGER} {@link Intent}s.
      *
      * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder apps
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
@@ -160,6 +164,8 @@ public class PanicTrigger {
      * and have been manually connected by the user to this app.
      *
      * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder apps that are
+     * currently to this trigger app
      * @see #checkForConnectIntent(Activity)
      * @see #checkForDisconnectIntent(Activity)
      */
