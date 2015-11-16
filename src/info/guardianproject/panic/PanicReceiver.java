@@ -44,7 +44,7 @@ public class PanicReceiver {
      * Get the {@code packageName} of the currently configured panic trigger
      * app, or {@code null} if none.
      *
-     * @param context
+     * @param context the app's {@link Context}
      * @return the {@code packageName} or null
      */
     public static String getTriggerPackageName(Context context) {
@@ -72,7 +72,7 @@ public class PanicReceiver {
      * example, if the receiver app launches its Panic Config {@code Activity}.
      *
      * @param activity the {@link Activity} that received an
-     *            {@link Panic#ACTION_CONNECT} {@link Intent}
+     *                 {@link Panic#ACTION_CONNECT} {@link Intent}
      */
     public static void setTriggerPackageName(Activity activity) {
         String intentPackageName = activity.getIntent().getPackage();
@@ -94,7 +94,7 @@ public class PanicReceiver {
      * {@code ACTION_DISCONNECT Intent} to the previous app, and an
      * {@code ACTION_CONNECT Intent} to the newly configured app.
      *
-     * @param activity the current {@link Activity}
+     * @param activity    the current {@link Activity}
      * @param packageName the app to set as the panic trigger
      */
     public static void setTriggerPackageName(Activity activity, String packageName) {
@@ -123,6 +123,10 @@ public class PanicReceiver {
     /**
      * Get a list of resolved {@link Activity}s that can send panic trigger
      * {@link Intent}s.
+     *
+     * @param pm a {@link PackageManager} instance from the app's {@link Context}
+     * @return {@link List} of {@link ResolveInfo} instances for each app that
+     * responds to {@link Panic#ACTION_CONNECT} but not {@link Panic#ACTION_TRIGGER}
      */
     public static List<ResolveInfo> resolveTriggerApps(PackageManager pm) {
         /*

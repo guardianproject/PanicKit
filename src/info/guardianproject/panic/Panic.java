@@ -14,6 +14,9 @@ public class Panic {
     /**
      * Check the specified {@link Intent} to see if it is a
      * {@link #ACTION_TRIGGER} {@code Intent}.
+     *
+     * @param intent the {@code Intent} to check
+     * @return whether {@code intent} has an action of {@code Panic.ACTION_TRIGGER}
      */
     public static boolean isTriggerIntent(Intent intent) {
         return ACTION_TRIGGER.equals(intent.getAction());

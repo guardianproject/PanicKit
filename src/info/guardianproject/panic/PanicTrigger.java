@@ -53,7 +53,7 @@ public class PanicTrigger {
     /**
      * Add a {@code packageName} to the list of connected responders.
      *
-     * @param context
+     * @param context     the app's {@link Context}
      * @param packageName the responder to add
      * @return whether it was successfully completed
      */
@@ -66,7 +66,7 @@ public class PanicTrigger {
     /**
      * Remove a {@code packageName} from the list of connected responders.
      *
-     * @param context
+     * @param context     the app's {@link Context}
      * @param packageName the responder to remove
      * @return whether it was successfully removed
      */
@@ -80,6 +80,7 @@ public class PanicTrigger {
      * Get the {@link Set} of {@code packageNames} of all {@link Activity}s that respond to
      * {@link Panic#ACTION_TRIGGER}.
      *
+     * @param context the app's {@link Context}
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
@@ -99,9 +100,10 @@ public class PanicTrigger {
      * {@link Panic#ACTION_TRIGGER}.  Unlike with {@link android.app.Service}s and
      * {@link Activity}s, a {@code BroadcastReceiver} cannot verify which app
      * sent this {@link Intent} to it.
-     * <p/>
+     * <p>
      * {@link android.content.BroadcastReceiver}s are not able to verify which app sent this.
      *
+     * @param context the app's {@link Context}
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
      */
@@ -118,9 +120,10 @@ public class PanicTrigger {
     /**
      * Get the {@link Set} of {@code packageNames} of all {@link android.app.Service}s
      * that respond to {@link Panic#ACTION_TRIGGER}.
-     * <p/>
+     * <p>
      * {@link android.app.Service}s are not able to verify which app sent this.
      *
+     * @param context the app's {@link Context}
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      */
@@ -139,6 +142,7 @@ public class PanicTrigger {
      * {@link android.content.BroadcastReceiver}s, or {@link android.app.Service}s
      * that respond to {@link Panic#ACTION_TRIGGER} {@link Intent}s.
      *
+     * @param context the app's {@link Context}
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
@@ -155,6 +159,7 @@ public class PanicTrigger {
      * {@link android.app.Service}s that respond to {@link Panic#ACTION_TRIGGER}
      * and have been manually connected by the user to this app.
      *
+     * @param context the app's {@link Context}
      * @see #checkForConnectIntent(Activity)
      * @see #checkForDisconnectIntent(Activity)
      */
@@ -180,6 +185,10 @@ public class PanicTrigger {
      * responders destroy things.  Apps can also only respond to
      * {@link Panic#ACTION_TRIGGER} with a non-destructive response which does
      * not require the apps to connect or the user to configure anything.
+     *
+     * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder apps that can connect
+     * to a trigger app
      */
     public static Set<String> getRespondersThatCanConnect(Context context) {
         List<ResolveInfo> connectInfos = context.getPackageManager().queryIntentActivities(
@@ -198,11 +207,12 @@ public class PanicTrigger {
      * configured panic receivers.  See {@link #sendTrigger(Activity, Intent)}
      * if you want to use a custom {@code Intent} that can include things
      * like a text message, email addresses, phone numbers, etc.
-     * <p/>
+     * <p>
      * Only the receiving {@link Activity}s will be able to verify which app sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
      *
+     * @param activity the {@code Activity} that will send the trigger {@code Intent}
      * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
      *                                  {@code Intent}
      */
@@ -216,11 +226,13 @@ public class PanicTrigger {
      * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
      * include things like a text message, email addresses, phone numbers, etc.
      * which a panic receiver app can use to send the message.
-     * <p/>
+     * <p>
      * Only the receiving {@link Activity}s will be able to verify who sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
      *
+     * @param activity the {@code Activity} that will send the trigger {@code Intent}
+     * @param intent   the {@code Intent} to send to panic responders
      * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
      *                                  {@code Intent}
      */
