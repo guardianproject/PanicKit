@@ -16,9 +16,9 @@ import java.util.Set;
 
 public class PanicTrigger {
 
-    private static final String SHARED_PREFS = "info.guardianproject.panic.PanicTrigger";
     private static final int SHARED_PREFS_MODE = Context.MODE_PRIVATE;
-    private static final String CONNECTED = "connected";
+    private static final String CONNECTED_SHARED_PREFS = "info.guardianproject.panic.PanicTrigger.CONNECTED";
+    private static final String ENABLED_SHARED_PREFS = "info.guardianproject.panic.PanicTrigger.ENABLED";
 
     /**
      * Checks whether the provided {@link Activity} was started with the action
@@ -57,11 +57,12 @@ public class PanicTrigger {
      * @param context     the app's {@link Context}
      * @param packageName the responder to add
      * @return whether it was successfully completed
+     * @see #removeConnectedResponder(Context, String)
      */
     public static boolean addConnectedResponder(Context context, String packageName) {
-        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS, SHARED_PREFS_MODE);
+        SharedPreferences prefs = context.getSharedPreferences(CONNECTED_SHARED_PREFS, SHARED_PREFS_MODE);
         // present in the prefs means connected
-        return prefs.edit().putString(packageName, CONNECTED).commit();
+        return prefs.edit().putBoolean(packageName, true).commit();
     }
 
     /**
@@ -70,10 +71,37 @@ public class PanicTrigger {
      * @param context     the app's {@link Context}
      * @param packageName the responder to remove
      * @return whether it was successfully removed
+     * @see #addConnectedResponder(Context, String)
      */
     public static boolean removeConnectedResponder(Context context, String packageName) {
-        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS, SHARED_PREFS_MODE);
+        SharedPreferences prefs = context.getSharedPreferences(CONNECTED_SHARED_PREFS, SHARED_PREFS_MODE);
         // absent from the prefs means not connected
+        return prefs.contains(packageName) && prefs.edit().remove(packageName).commit();
+    }
+
+    /**
+     * Add a {@code packageName} to the list of responders that will receive a trigger from this app.
+     *
+     * @param context     the app's {@link Context}
+     * @param packageName the responder to add
+     * @return whether it was successfully completed
+     * @see #disableResponder(Context, String)
+     */
+    public static boolean enableResponder(Context context, String packageName) {
+        SharedPreferences prefs = context.getSharedPreferences(ENABLED_SHARED_PREFS, SHARED_PREFS_MODE);
+        return prefs.edit().putBoolean(packageName, true).commit();
+    }
+
+    /**
+     * Remove a {@code packageName} to the list of responders that will receive a trigger from this app.
+     *
+     * @param context     the app's {@link Context}
+     * @param packageName the responder to add
+     * @return whether it was successfully completed
+     * @see #enableResponder(Context, String)
+     */
+    public static boolean disableResponder(Context context, String packageName) {
+        SharedPreferences prefs = context.getSharedPreferences(ENABLED_SHARED_PREFS, SHARED_PREFS_MODE);
         return prefs.contains(packageName) && prefs.edit().remove(packageName).commit();
     }
 
@@ -142,15 +170,17 @@ public class PanicTrigger {
     }
 
     /**
-     * Get the {@link Set} of all {@code packageNames} of any {@link Activity}s,
-     * {@link android.content.BroadcastReceiver}s, or {@link android.app.Service}s
-     * that respond to {@link Panic#ACTION_TRIGGER} {@link Intent}s.
+     * Get the {@link Set} of all {@code packageNames} of installed apps that include
+     * any {@link Activity}, {@link android.content.BroadcastReceiver}, or
+     * {@link android.app.Service} that responds to {@link Panic#ACTION_TRIGGER}
+     * {@link Intent}s.
      *
      * @param context the app's {@link Context}
      * @return the set of {@code packageNames} of responder apps
      * @see #getResponderActivities(Context) to get the {@link Activity}s
      * @see #getResponderBroadcastReceivers(Context) to get the {@link android.content.BroadcastReceiver}s
      * @see #getResponderServices(Context) to get the {@link android.app.Service}s
+     * @see #getEnabledResponders(Context)
      */
     public static Set<String> getAllResponders(Context context) {
         List<String> packageNames = new ArrayList<String>(getResponderActivities(context));
@@ -169,12 +199,14 @@ public class PanicTrigger {
      * currently to this trigger app
      * @see #checkForConnectIntent(Activity)
      * @see #checkForDisconnectIntent(Activity)
+     * @see #getAllResponders(Context)
+     * @see #getEnabledResponders(Context)
      */
     public static Set<String> getConnectedResponders(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS, SHARED_PREFS_MODE);
+        SharedPreferences prefs = context.getSharedPreferences(CONNECTED_SHARED_PREFS, SHARED_PREFS_MODE);
         Set<String> connectedAndInstalled = new HashSet<String>();
         Set<String> all = getAllResponders(context);
-        // present in the prefs means it has been connected
+        // present in the connected prefs means it has been connected
         for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
             String packageName = entry.getKey();
             if (all.contains(packageName)) {
@@ -182,6 +214,44 @@ public class PanicTrigger {
             }
         }
         return connectedAndInstalled;
+    }
+
+    /**
+     * Get the {@link Set} of {@code packageNames} of any {@link Activity}s or
+     * {@link android.app.Service}s that respond to {@link Panic#ACTION_TRIGGER}
+     * and have been enabled by the user
+     *
+     * @param context the app's {@link Context}
+     * @return the set of {@code packageNames} of responder apps that are
+     * currently to this trigger app
+     * @see #checkForConnectIntent(Activity)
+     * @see #checkForDisconnectIntent(Activity)
+     * @see #getAllResponders(Context)
+     * @see #getConnectedResponders(Context)
+     */
+    public static Set<String> getEnabledResponders(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(ENABLED_SHARED_PREFS, SHARED_PREFS_MODE);
+        Map<String, ?> allPrefs = prefs.getAll();
+        Set<String> enabledAndInstalled = new HashSet<String>();
+        Set<String> all = getAllResponders(context);
+        if (allPrefs.isEmpty()) {
+            // make sure allPrefs is not empty if the user disables all apps
+            prefs.edit().putBoolean("hasBeenInited", true).apply();
+            // the default is enabled, so write this this out
+            for (Map.Entry<String, ?> entry : allPrefs.entrySet()) {
+                enableResponder(context, entry.getKey());
+            }
+            return all;
+        } else {
+            // present in the enabled prefs means it is currently enabled
+            for (Map.Entry<String, ?> entry : allPrefs.entrySet()) {
+                String packageName = entry.getKey();
+                if (all.contains(packageName)) {
+                    enabledAndInstalled.add(packageName);
+                }
+            }
+            return enabledAndInstalled;
+        }
     }
 
     /**
@@ -247,21 +317,29 @@ public class PanicTrigger {
         if (!Panic.isTriggerIntent(intent)) {
             PanicUtils.throwNotTriggerIntent();
         }
+        Set<String> enabled = getEnabledResponders(activity);
+        for (String s: enabled)
         try {
             // Activitys
             for (String packageName : getResponderActivities(activity)) {
-                intent.setPackage(packageName);
-                activity.startActivityForResult(intent, 0);
+                if (enabled.contains(packageName)) {
+                    intent.setPackage(packageName);
+                    activity.startActivityForResult(intent, 0);
+                }
             }
             // BroadcastReceivers
             for (String packageName : getResponderBroadcastReceivers(activity)) {
-                intent.setPackage(packageName);
-                activity.sendBroadcast(intent);
+                if (enabled.contains(packageName)) {
+                    intent.setPackage(packageName);
+                    activity.sendBroadcast(intent);
+                }
             }
             //Services
             for (String packageName : getResponderServices(activity)) {
-                intent.setPackage(packageName);
-                activity.startService(intent);
+                if (enabled.contains(packageName)) {
+                    intent.setPackage(packageName);
+                    activity.startService(intent);
+                }
             }
         } catch (ActivityNotFoundException e) {
             // intent-filter without DEFAULT category makes the Activity be detected but not found
