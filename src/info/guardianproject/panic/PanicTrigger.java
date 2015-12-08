@@ -1,6 +1,7 @@
 package info.guardianproject.panic;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -246,20 +247,28 @@ public class PanicTrigger {
         if (!Panic.isTriggerIntent(intent)) {
             PanicUtils.throwNotTriggerIntent();
         }
-        // Activitys
-        for (String packageName : getResponderActivities(activity)) {
-            intent.setPackage(packageName);
-            activity.startActivityForResult(intent, 0);
-        }
-        // BroadcastReceivers
-        for (String packageName : getResponderBroadcastReceivers(activity)) {
-            intent.setPackage(packageName);
-            activity.sendBroadcast(intent);
-        }
-        //Services
-        for (String packageName : getResponderServices(activity)) {
-            intent.setPackage(packageName);
-            activity.startService(intent);
+        try {
+            // Activitys
+            for (String packageName : getResponderActivities(activity)) {
+                intent.setPackage(packageName);
+                activity.startActivityForResult(intent, 0);
+            }
+            // BroadcastReceivers
+            for (String packageName : getResponderBroadcastReceivers(activity)) {
+                intent.setPackage(packageName);
+                activity.sendBroadcast(intent);
+            }
+            //Services
+            for (String packageName : getResponderServices(activity)) {
+                intent.setPackage(packageName);
+                activity.startService(intent);
+            }
+        } catch (ActivityNotFoundException e) {
+            // intent-filter without DEFAULT category makes the Activity be detected but not found
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // if we don't have permission to start the Service
+            e.printStackTrace();
         }
     }
 }
