@@ -25,7 +25,7 @@ git clean -fdx
 
 ./setup-ant
 
-faketime -f "$TIMESTAMP" ant release-all
+ant release-all
 
 jarname=panic-$(git describe)
 rm -f ${jarname}*.asc
