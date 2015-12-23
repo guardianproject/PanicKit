@@ -281,20 +281,26 @@ public class PanicTrigger {
 
     /**
      * Send a basic {@link Panic#ACTION_TRIGGER} {@link Intent} to all
-     * configured panic receivers.  See {@link #sendTrigger(Activity, Intent)}
+     * configured panic receivers.  See {@link #sendTrigger(Context, Intent)}
      * if you want to use a custom {@code Intent} that can include things
      * like a text message, email addresses, phone numbers, etc.
-     * <p>
-     * Only the receiving {@link Activity}s will be able to verify which app sent this,
+     * <p/>
+     * If the receiving apps must be able to verify which app sent this
+     * {@code Intent}, then {@code context} <b>must</b> be an instance of
+     * {@link Activity}.
+     * <p/>
+     * Only the receiving {@code Activity}s will be able to verify which app sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
      *
-     * @param activity the {@code Activity} that will send the trigger {@code Intent}
+     * @param context the {@code Context} that will send the trigger {@code Intent},
+     *                If this is an instance of {@code Activity}, then the receiving
+     *                apps will be able to verify which app sent the {@code Intent}
      * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
      *                                  {@code Intent}
      */
-    public static void sendTrigger(Activity activity) {
-        sendTrigger(activity, PanicUtils.TRIGGER_INTENT);
+    public static void sendTrigger(Context context) {
+        sendTrigger(context, PanicUtils.TRIGGER_INTENT);
     }
 
     /**
@@ -303,42 +309,59 @@ public class PanicTrigger {
      * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
      * include things like a text message, email addresses, phone numbers, etc.
      * which a panic receiver app can use to send the message.
-     * <p>
-     * Only the receiving {@link Activity}s will be able to verify who sent this,
+     * <p/>
+     * If the receiving apps must be able to verify which app sent this
+     * {@code Intent}, then {@code context} <b>must</b> be an instance of
+     * {@link Activity}.
+     * <p/>
+     * Only receiving {@code Activity}s will be able to verify who sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
      *
-     * @param activity the {@code Activity} that will send the trigger {@code Intent}
-     * @param intent   the {@code Intent} to send to panic responders
+     * @param context the {@code Context} that will send the trigger {@code Intent},
+     *                If this is an instance of {@code Activity}, then the receiving
+     *                apps will be able to verify which app sent the {@code Intent}
+     * @param intent  the {@code Intent} to send to panic responders
      * @throws IllegalArgumentException if not a {@link Panic#ACTION_TRIGGER}
      *                                  {@code Intent}
      */
-    public static void sendTrigger(Activity activity, Intent intent) {
+    public static void sendTrigger(Context context, Intent intent) {
         if (!Panic.isTriggerIntent(intent)) {
             PanicUtils.throwNotTriggerIntent();
         }
-        Set<String> enabled = getEnabledResponders(activity);
-        for (String s: enabled)
+        Set<String> enabled = getEnabledResponders(context);
+        for (String s : enabled)
         try {
             // Activitys
-            for (String packageName : getResponderActivities(activity)) {
+            for (String packageName : getResponderActivities(context)) {
                 if (enabled.contains(packageName)) {
                     intent.setPackage(packageName);
-                    activity.startActivityForResult(intent, 0);
+                    if (context instanceof Activity) {
+                        Activity activity = (Activity) context;
+                        activity.startActivityForResult(intent, 0);
+                    } else {
+                        // startActivityForResult() comes from Activity, so use an
+                        // alternate method of sending that Context supports. This
+                        // currently will send an Intent which the receiver will
+                        // not be able to verify which app sent it. That requires
+                        // including an IntentSender or some other hack like that
+                        // https://dev.guardianproject.info/issues/6260
+                        context.startActivity(intent);
+                    }
                 }
             }
             // BroadcastReceivers
-            for (String packageName : getResponderBroadcastReceivers(activity)) {
+            for (String packageName : getResponderBroadcastReceivers(context)) {
                 if (enabled.contains(packageName)) {
                     intent.setPackage(packageName);
-                    activity.sendBroadcast(intent);
+                    context.sendBroadcast(intent);
                 }
             }
             //Services
-            for (String packageName : getResponderServices(activity)) {
+            for (String packageName : getResponderServices(context)) {
                 if (enabled.contains(packageName)) {
                     intent.setPackage(packageName);
-                    activity.startService(intent);
+                    context.startService(intent);
                 }
             }
         } catch (ActivityNotFoundException e) {
