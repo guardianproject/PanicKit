@@ -28,9 +28,11 @@ jarname=panic-$(git describe)
 rm -f ${jarname}*.asc
 
 # standardize timestamps in ZIP headers
-for f in ${jarname}*.jar; do
-    strip-nondeterminism -t jar -T $(git log -n1 --format=format:%at) $f
-done
+if which strip-nondeterminism > /dev/null; then
+    for f in ${jarname}*.jar; do
+	strip-nondeterminism -t jar -T $(git log -n1 --format=format:%at) $f
+    done
+fi
 
 if which gpg > /dev/null; then
     if [ -z "`gpg --list-secret-keys`" ]; then
