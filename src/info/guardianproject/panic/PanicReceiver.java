@@ -149,4 +149,42 @@ public class PanicReceiver {
 
         return triggerApps;
     }
+
+    /**
+     * Check whether the provided {@link Activity} has received an {@link Intent}
+     * that has an action of {@link Panic#ACTION_TRIGGER} and is from the
+     * panic trigger app that is currently connected to this app.
+     *
+     * @param activity the {@code Activity} to get for an {@code Intent}
+     * @return boolean
+     */
+    public static boolean receivedTriggerFromConnectedApp(Activity activity) {
+        if (!Panic.isTriggerIntent(activity.getIntent())) {
+            return false;
+        }
+
+        String packageName = PanicUtils.getCallingPackageName(activity);
+        return !TextUtils.isEmpty((packageName))
+                && TextUtils.equals(packageName, getTriggerPackageName(activity));
+    }
+
+    /**
+     * Check whether the provided {@link Activity} has received an {@link Intent}
+     * that has an action of {@link Panic#ACTION_TRIGGER} and is not from the
+     * currently configured panic trigger app, or, there is no panic trigger app
+     * configured.
+     *
+     * @param activity the {@code Activity} to get for an {@code Intent}
+     * @return boolean
+     */
+    public static boolean shouldUseDefaultResponseToTrigger(Activity activity) {
+        if (!Panic.isTriggerIntent(activity.getIntent())) {
+            return false;
+        }
+
+        String packageName = PanicUtils.getCallingPackageName(activity);
+        return TextUtils.isEmpty(packageName)
+                || "DEFAULT".equals(packageName)
+                || !packageName.equals(getTriggerPackageName(activity));
+    }
 }
