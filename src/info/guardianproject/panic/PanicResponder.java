@@ -78,7 +78,7 @@ public class PanicResponder {
         String intentPackageName = activity.getIntent().getPackage();
         String callingPackageName = PanicUtils.getCallingPackageName(activity);
         if (intentPackageName == null && callingPackageName == null) {
-            return;
+            // ignored
         } else {
             setTriggerPackageName(activity, callingPackageName);
         }
