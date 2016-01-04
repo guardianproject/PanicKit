@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class PanicReceiver {
+public class PanicResponder {
 
     public static final String PREF_TRIGGER_PACKAGE_NAME = "panicResponderTriggerPackageName";
 
