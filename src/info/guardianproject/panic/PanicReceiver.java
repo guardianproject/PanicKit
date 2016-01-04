@@ -16,7 +16,7 @@ import java.util.List;
 
 public class PanicReceiver {
 
-    public static final String PREF_TRIGGER_PACKAGE_NAME = "panicReceiverTriggerPackageName";
+    public static final String PREF_TRIGGER_PACKAGE_NAME = "panicResponderTriggerPackageName";
 
     /**
      * Checks whether the provided {@link Activity} was started with the action
@@ -66,10 +66,10 @@ public class PanicReceiver {
      * {@code ACTION_DISCONNECT Intent} to the previous app, and an
      * {@code ACTION_CONNECT Intent} to the newly configured app.
      * <p>
-     * When this is called with an {@code Activity} in the same receiver app
+     * When this is called with an {@code Activity} in the same responder app
      * that called the {@link Activity#startActivityForResult(Intent, int)},
      * then it will <b>not</b> change the existing trigger app setting! For
-     * example, if the receiver app launches its Panic Config {@code Activity}.
+     * example, if the responder app launches its Panic Config {@code Activity}.
      *
      * @param activity the {@link Activity} that received an
      *                 {@link Panic#ACTION_CONNECT} {@link Intent}
