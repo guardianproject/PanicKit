@@ -2,14 +2,17 @@
 package info.guardianproject.panic;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -186,5 +189,58 @@ public class PanicResponder {
         return TextUtils.isEmpty(packageName)
                 || "DEFAULT".equals(packageName)
                 || !packageName.equals(getTriggerPackageName(activity));
+    }
+
+    public static void deleteAllAppData(final Context context) {
+        // SharedPreferences can hold onto values and write them out later
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().clear().apply();
+
+        HashSet<File> dirs = new HashSet<File>(3);
+        dirs.add(context.getFilesDir().getParentFile()); // root of the app's /data/data
+        dirs.add(context.getCacheDir());
+        dirs.add(context.getExternalCacheDir());
+        if (Build.VERSION.SDK_INT >= 19) {
+            for (File f : context.getExternalCacheDirs()) {
+                dirs.add(f);
+            }
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
+            for (File f : context.getExternalMediaDirs()) {
+                dirs.add(f);
+            }
+        }
+        for (File dir : dirs) {
+            try {
+                if (dir != null && dir.exists()) {
+                    deleteRecursive(dir);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            // this will force close this app, so run last
+            if (Build.VERSION.SDK_INT >= 19) {
+                ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
+                        .clearApplicationUserData();
+            } else {
+                Runtime.getRuntime().exec(String.format("pm clear %s", context.getPackageName()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deleteRecursive(File f) {
+        if (f == null) {
+            return;
+        }
+        if (f.isDirectory()) {
+            for (String child : f.list()) {
+                deleteRecursive(new File(f, child));
+            }
+        }
+        f.delete();
     }
 }
