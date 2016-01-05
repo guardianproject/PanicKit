@@ -55,18 +55,18 @@
              linkoffline="https://developer.android.com/reference ${sdk.dir}/docs/reference"
              linksource="true"
              doctitle="${ant.project.name}" />
-    <jar destfile="${javadoc.jar}"
-         manifest="MANIFEST.MF"
-         basedir="${javadoc.dir}">
-    </jar>
+    <zip destfile="${javadoc.jar}">
+      <zipfileset dir="." includes="MANIFEST.MF" prefix="META-INF" />
+      <zipfileset dir="${javadoc.dir}" />
+    </zip>
   </target>
 
   <target name="source" description="Generate Javadocs" depends="-build-setup,-getgitdetails">
-    <jar destfile="${source.jar}"
-         manifest="MANIFEST.MF"
-         includes="info/**"
-         basedir="${source.dir}">
-    </jar>
+    <zip destfile="${source.jar}">
+      <zipfileset dir="." includes="MANIFEST.MF" prefix="META-INF" />
+      <zipfileset dir="${source.dir}"
+                  includes="info/**" />
+    </zip>
     <delete file="${source.jar}.asc"/>
   </target>
 
@@ -93,11 +93,11 @@
     </if>
     <property file="${sdk.dir}/tools/source.properties" />
     <delete file="${release.jar}"/>
-    <jar destfile="${release.jar}"
-         manifest="MANIFEST.MF"
-         includes="info/**"
-         basedir="${out.classes.absolute.dir}">
-    </jar>
+    <zip destfile="${release.jar}">
+      <zipfileset dir="." includes="MANIFEST.MF" prefix="META-INF" />
+      <zipfileset dir="${out.classes.absolute.dir}"
+                  includes="info/**" />
+    </zip>
   </target>
 
   <target name="release-all" depends="clean,release,javadoc,source,pom" />
