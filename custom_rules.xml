@@ -96,7 +96,8 @@
     <zip destfile="${release.jar}">
       <zipfileset dir="." includes="MANIFEST.MF" prefix="META-INF" />
       <zipfileset dir="${out.classes.absolute.dir}"
-                  includes="info/**" />
+                  includes="info/**"
+                  excludes="**/BuildConfig.class" />
     </zip>
   </target>
 
