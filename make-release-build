@@ -34,6 +34,10 @@ if which strip-nondeterminism > /dev/null; then
     done
 fi
 
+for f in ${jarname}*.jar; do
+    sha256sum $f
+done
+
 if which gpg > /dev/null; then
     if [ -z "`gpg --list-secret-keys`" ]; then
         echo "No GPG secret keys found, not signing APK"
