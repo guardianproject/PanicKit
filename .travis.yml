@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 language: android
 
 jdk:
@@ -8,6 +8,11 @@ jdk:
   # (sometimes Travis cannot reliably start the emulator with these)
   - oraclejdk8
   - oraclejdk7
+
+before_install:
+  - sudo add-apt-repository ppa:guardianproject/ppa -y
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq strip-nondeterminism libarchive-zip-perl
 
 android:
   components:
