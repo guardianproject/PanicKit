@@ -18,11 +18,8 @@ public class PanicUtils {
             return null;
         String packageName = componentName.getPackageName();
         if (TextUtils.isEmpty(packageName)) {
-            packageName = activity.getIntent().getPackage();
-        }
-        if (TextUtils.isEmpty(packageName)) {
             Log.e(activity.getPackageName(),
-                    "Received blank Panic.ACTION_DISCONNECT Intent, it must be sent using startActivityForResult()!");
+                    "Received blank Panic Intent! The Intent must be sent using startActivityForResult() and received without launchMode singleTask or singleInstance!");
         }
         return packageName;
     }
