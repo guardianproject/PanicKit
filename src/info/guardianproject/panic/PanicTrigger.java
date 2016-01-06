@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -284,14 +285,17 @@ public class PanicTrigger {
      * configured panic receivers.  See {@link #sendTrigger(Context, Intent)}
      * if you want to use a custom {@code Intent} that can include things
      * like a text message, email addresses, phone numbers, etc.
-     * <p/>
-     * If the receiving apps must be able to verify which app sent this
-     * {@code Intent}, then {@code context} <b>must</b> be an instance of
-     * {@link Activity}.
-     * <p/>
+     * <p>
      * Only the receiving {@code Activity}s will be able to verify which app sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
+     * <p>
+     * <strong>WARNING</strong>: If the receiving apps must be able to verify
+     * which app sent this {@code Intent}, then {@code context} <b>must</b> be
+     * an instance of {@link Activity}. Also, that {@code Activity} cannot have
+     * {@code android:launchMode="singleInstance"} (because it is not possible
+     * to get the calling {@code Activity}, as set by
+     * {@link Activity#startActivityForResult(Intent, int, Bundle)})
      *
      * @param context the {@code Context} that will send the trigger {@code Intent},
      *                If this is an instance of {@code Activity}, then the receiving
@@ -309,14 +313,17 @@ public class PanicTrigger {
      * {@link IllegalArgumentException} will be thrown.  The {@code Intent} can
      * include things like a text message, email addresses, phone numbers, etc.
      * which a panic receiver app can use to send the message.
-     * <p/>
-     * If the receiving apps must be able to verify which app sent this
-     * {@code Intent}, then {@code context} <b>must</b> be an instance of
-     * {@link Activity}.
-     * <p/>
-     * Only receiving {@code Activity}s will be able to verify who sent this,
+     * <p>
+     * Only the receiving {@code Activity}s will be able to verify which app sent this,
      * {@link android.app.Service}s and {@link android.content.BroadcastReceiver}s
      * will not.
+     * <p>
+     * <strong>WARNING</strong>: If the receiving apps must be able to verify
+     * which app sent this {@code Intent}, then {@code context} <b>must</b> be
+     * an instance of {@link Activity}. Also, that {@code Activity} cannot have
+     * {@code android:launchMode="singleInstance"} (because it is not possible
+     * to get the calling {@code Activity}, as set by
+     * {@link Activity#startActivityForResult(Intent, int, Bundle)})
      *
      * @param context the {@code Context} that will send the trigger {@code Intent},
      *                If this is an instance of {@code Activity}, then the receiving

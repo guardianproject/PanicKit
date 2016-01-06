@@ -157,6 +157,12 @@ public class PanicResponder {
      * Check whether the provided {@link Activity} has received an {@link Intent}
      * that has an action of {@link Panic#ACTION_TRIGGER} and is from the
      * panic trigger app that is currently connected to this app.
+     * <p>
+     * <strong>WARNING</strong>: If the {@code Activity} has
+     * {@code android:launchMode="singleInstance"} or {@code "singleTask"}, then
+     * this method will always return {@code false} because it is not possible
+     * to get the calling {@code Activity}, as set by
+     * {@link Activity#startActivityForResult(Intent, int)}
      *
      * @param activity the {@code Activity} to get for an {@code Intent}
      * @return boolean
