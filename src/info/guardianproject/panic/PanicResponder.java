@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -195,6 +196,55 @@ public class PanicResponder {
         return TextUtils.isEmpty(packageName)
                 || "DEFAULT".equals(packageName)
                 || !packageName.equals(getTriggerPackageName(activity));
+    }
+
+    /**
+     * Given a {@link ListPreference} widget, this method sets up that widget to
+     * display the current state of the trigger app. If a trigger app is
+     * connected, then the icon and name of that app will be shown.
+     *
+     * @param listPreference
+     * @param defaultSummaryResid the string resource for the default summary
+     * @param noneSummaryResid the string resource for the summary when no app is allowed
+     */
+    @TargetApi(11)
+    public static void configTriggerAppListPreference(ListPreference listPreference,
+                                                      int defaultSummaryResid,
+                                                      int noneSummaryResid) {
+        Context context = listPreference.getContext();
+        String triggerPackageName = getTriggerPackageName(context);
+        if (TextUtils.isEmpty(triggerPackageName)
+                || triggerPackageName.equals(Panic.PACKAGE_NAME_DEFAULT)) {
+            listPreference.setValue(Panic.PACKAGE_NAME_DEFAULT);
+            listPreference.setDefaultValue(Panic.PACKAGE_NAME_DEFAULT);
+            listPreference.setSummary(defaultSummaryResid);
+            if (Build.VERSION.SDK_INT >= 11) {
+                listPreference.setIcon(null);
+            }
+        } else {
+            listPreference.setValue(triggerPackageName);
+            listPreference.setDefaultValue(triggerPackageName);
+            if (triggerPackageName.equals(Panic.PACKAGE_NAME_NONE)) {
+                listPreference.setSummary(noneSummaryResid);
+                if (Build.VERSION.SDK_INT >= 11) {
+                    listPreference.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+                }
+            } else {
+                try {
+                    PackageManager pm = context.getPackageManager();
+                    listPreference.setSummary(pm.getApplicationLabel(
+                            pm.getApplicationInfo(triggerPackageName, 0)));
+                    if (Build.VERSION.SDK_INT >= 11) {
+                        listPreference.setIcon(pm.getApplicationIcon(triggerPackageName));
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    listPreference.setSummary(defaultSummaryResid);
+                    if (Build.VERSION.SDK_INT >= 11) {
+                        listPreference.setIcon(null);
+                    }
+                }
+            }
+        }
     }
 
     @TargetApi(21)
