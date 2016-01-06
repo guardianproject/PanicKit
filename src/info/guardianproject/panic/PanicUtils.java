@@ -25,7 +25,11 @@ public class PanicUtils {
     }
 
     static boolean checkForIntentWithAction(Activity activity, String action) {
-        return TextUtils.equals(activity.getIntent().getAction(), action);
+        Intent intent = activity.getIntent();
+        if (intent == null) {
+            return false;
+        }
+        return TextUtils.equals(intent.getAction(), action);
     }
 
     static void throwNotTriggerIntent() {

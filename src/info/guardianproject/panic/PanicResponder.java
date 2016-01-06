@@ -24,6 +24,31 @@ public class PanicResponder {
     public static final String PREF_TRIGGER_PACKAGE_NAME = "panicResponderTriggerPackageName";
 
     /**
+     * Checks the provided {@link Activity} to see whether it has received a
+     * {@link Panic#ACTION_CONNECT} {@code Intent}. If it has, it returns the
+     * package name of the app that sent it. Otherwise, it returns {@code null}.
+     * The sender is the only information used from the
+     * {@code ACTION_CONNECT Intent}.
+     * <p>
+     * The responder app should always respond to every
+     * {@code ACTION_CONNECT Intent}, even it is from the currently connected
+     * trigger app. That trigger app could have been uninstalled and
+     * reinstalled, so it needs to receive the confirmation again.
+     *
+     * @param activity the {@code Activity} that received the {@code Intent}
+     * @return the package of the sending app or {@code null} if it was not a
+     *         {@code ACTION_CONNECT Intent} or the {@code Intent} was not sent
+     *         with {@link Activity#startActivityForResult(Intent, int)}
+     * @see #checkForDisconnectIntent(Activity)
+     */
+    public static String getConnectIntentSender(Activity activity) {
+        if (PanicUtils.checkForIntentWithAction(activity, Panic.ACTION_CONNECT)) {
+            return PanicUtils.getCallingPackageName(activity);
+        }
+        return null;
+    }
+
+    /**
      * Checks whether the provided {@link Activity} was started with the action
      * {@link Panic#ACTION_DISCONNECT}, and if so, processes that {@link Intent}
      * , removing the sending app as the panic trigger if it is currently
@@ -31,6 +56,7 @@ public class PanicResponder {
      *
      * @param activity the {@code Activity} to check for the {@code Intent}
      * @return whether an {@code ACTION_DISCONNECT Intent} was received
+     * @see PanicResponder#getConnectIntentSender(Activity)
      */
     public static boolean checkForDisconnectIntent(Activity activity) {
         boolean result = false;
