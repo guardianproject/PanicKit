@@ -1,6 +1,7 @@
 
 package info.guardianproject.panic;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -32,8 +33,7 @@ public class PanicResponder {
      */
     public static boolean checkForDisconnectIntent(Activity activity) {
         boolean result = false;
-        Intent intent = activity.getIntent();
-        if (intent != null && TextUtils.equals(intent.getAction(), Panic.ACTION_DISCONNECT)) {
+        if (PanicUtils.checkForIntentWithAction(activity, Panic.ACTION_DISCONNECT)) {
             result = true;
             if (TextUtils.equals(PanicUtils.getCallingPackageName(activity),
                     getTriggerPackageName(activity))) {
@@ -197,6 +197,7 @@ public class PanicResponder {
                 || !packageName.equals(getTriggerPackageName(activity));
     }
 
+    @TargetApi(21)
     public static void deleteAllAppData(final Context context) {
         // SharedPreferences can hold onto values and write them out later
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
