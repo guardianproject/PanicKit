@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class PanicTrigger {
+    public static final String TAG = "PanicTrigger";
 
     private static final int SHARED_PREFS_MODE = Context.MODE_PRIVATE;
     private static final String CONNECTED_SHARED_PREFS = "info.guardianproject.panic.PanicTrigger.CONNECTED";
@@ -343,10 +345,11 @@ public class PanicTrigger {
             for (String packageName : getResponderActivities(context)) {
                 if (enabled.contains(packageName)) {
                     intent.setPackage(packageName);
-                    if (context instanceof Activity) {
+                    try {
                         Activity activity = (Activity) context;
                         activity.startActivityForResult(intent, 0);
-                    } else {
+                    } catch (ClassCastException e) {
+                        Log.w(TAG, "sending trigger from Context, receivers cannot see sender packageName!");
                         // startActivityForResult() comes from Activity, so use an
                         // alternate method of sending that Context supports. This
                         // currently will send an Intent which the receiver will
