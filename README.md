@@ -6,7 +6,8 @@ receive the trigger signal from the trigger apps when the user has initiated
 the panic response. The connections between trigger and receiver can be
 strictly enforced based on `packageName` and APK signing key.
 
-https://dev.guardianproject.info/projects/panic/wiki
+An overview of the PanicKit and how to use it is here:
+https://dev.guardianproject.info/projects/panic/wiki/PanicKit
 
 
 License
