@@ -1,4 +1,5 @@
 
+
 package info.guardianproject.panic;
 
 import android.annotation.TargetApi;
@@ -34,6 +35,12 @@ public class PanicResponder {
      * {@code ACTION_CONNECT Intent}, even it is from the currently connected
      * trigger app. That trigger app could have been uninstalled and
      * reinstalled, so it needs to receive the confirmation again.
+     * <p>
+     * <strong>WARNING</strong>: If the {@code Activity} has
+     * {@code android:launchMode="singleInstance"} or {@code "singleTask"}, then
+     * this method will always return {@code false} because it is not possible
+     * to get the calling {@code Activity}, as set by
+     * {@link Activity#startActivityForResult(Intent, int)}
      *
      * @param activity the {@code Activity} that received the {@code Intent}
      * @return the package of the sending app or {@code null} if it was not a
@@ -53,6 +60,12 @@ public class PanicResponder {
      * {@link Panic#ACTION_DISCONNECT}, and if so, processes that {@link Intent}
      * , removing the sending app as the panic trigger if it is currently
      * configured to be so.
+     * <p>
+     * <strong>WARNING</strong>: If the {@code Activity} has
+     * {@code android:launchMode="singleInstance"} or {@code "singleTask"}, then
+     * this method will not disconnect because it is not possible to get the
+     * calling {@code Activity}, as set by
+     * {@link Activity#startActivityForResult(Intent, int)}
      *
      * @param activity the {@code Activity} to check for the {@code Intent}
      * @return whether an {@code ACTION_DISCONNECT Intent} was received
