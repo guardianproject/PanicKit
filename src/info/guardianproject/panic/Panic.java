@@ -19,6 +19,6 @@ public class Panic {
      * @return whether {@code intent} has an action of {@code Panic.ACTION_TRIGGER}
      */
     public static boolean isTriggerIntent(Intent intent) {
-        return ACTION_TRIGGER.equals(intent.getAction());
+        return intent != null && ACTION_TRIGGER.equals(intent.getAction());
     }
 }

@@ -14,8 +14,9 @@ public class PanicUtils {
     static String getCallingPackageName(Activity activity) {
         // getCallingPackage() was unstable until android-18, use this
         ComponentName componentName = activity.getCallingActivity();
-        if (componentName == null)
+        if (componentName == null) {
             return null;
+	}
         String packageName = componentName.getPackageName();
         if (TextUtils.isEmpty(packageName)) {
             Log.e(activity.getPackageName(),
