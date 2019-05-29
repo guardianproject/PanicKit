@@ -5,4 +5,4 @@ set -x
 
 CURDIR=`pwd`
 
-android update lib-project --path ${CURDIR}
+$ANDROID_HOME/tools/android update lib-project --path ${CURDIR}
