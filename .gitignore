@@ -28,3 +28,12 @@ proguard.cfg
 # release builds
 panickit*.jar*
 MANIFEST.MF
+
+# gradle
+/.gradle/
+/.idea/
+/build/
+*.iml
+
+# gh-pages
+/public/

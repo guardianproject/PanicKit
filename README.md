@@ -6,7 +6,18 @@ receive the trigger signal from the trigger apps when the user has initiated
 the panic response. The connections between trigger and receiver can be
 strictly enforced based on `packageName` and APK signing key.
 
-https://dev.guardianproject.info/projects/panic/wiki
+An overview of the PanicKit and how to use it is here:
+https://dev.guardianproject.info/projects/panic/wiki/PanicKit
+
+
+Downloads
+---------
+
+The binary jar, source jar, and javadoc jar are all available on `jcenter()`,
+and they all include GPG signatures.  To include this library using gradle,
+add this line to your *build.gradle*:
+
+    compile 'info.guardianproject.panic:panic:1.0'
 
 
 License
