@@ -242,7 +242,7 @@ public class PanicResponder {
      * display the current state of the trigger app. If a trigger app is
      * connected, then the icon and name of that app will be shown.
      *
-     * @param listPreference
+     * @param listPreference the UI widget to display the current state
      * @param defaultSummaryResid the string resource for the default summary
      * @param noneSummaryResid the string resource for the summary when no app is allowed
      */
