@@ -3,22 +3,21 @@ language: android
 
 jdk:
   # the release build infrastructure uses OpenJDK from Debian
-  - openjdk7
+  - openjdk8
   # many developers use the Oracle JDK
   # (sometimes Travis cannot reliably start the emulator with these)
   - oraclejdk8
-  - oraclejdk7
 
 before_install:
   - sudo add-apt-repository ppa:guardianproject/ppa -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq strip-nondeterminism libarchive-zip-perl
+  - sudo apt-get install -qq strip-nondeterminism libarchive-zip-perl ant ant-optional
 
 android:
   components:
     - tools
     - platform-tools
-    - build-tools-23.0.2
+    - build-tools-24.0.0
     - android-23
   licenses:
     # only approve the free software licenses
@@ -26,6 +25,8 @@ android:
     - 'android-sdk-license-.+'
 
 script:
+  - ./gradlew jarRelease
+  - for f in build/libs/*.*; do sha256sum $f; done
   # run release build script
   - ./make-release-build
 
