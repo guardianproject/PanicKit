@@ -10,6 +10,16 @@ An overview of the PanicKit and how to use it is here:
 https://dev.guardianproject.info/projects/panic/wiki/PanicKit
 
 
+Downloads
+---------
+
+The binary jar, source jar, and javadoc jar are all available on `jcenter()`,
+and they all include GPG signatures.  To include this library using gradle,
+add this line to your *build.gradle*:
+
+    compile 'info.guardianproject.panic:panic:1.0'
+
+
 License
 -------
 
