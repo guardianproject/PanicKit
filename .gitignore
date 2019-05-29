@@ -34,3 +34,6 @@ MANIFEST.MF
 /.idea/
 /build/
 *.iml
+
+# gh-pages
+/public/
