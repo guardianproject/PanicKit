@@ -22,7 +22,9 @@ before_script:
   - apt-get install --install-recommends
         android-sdk
         android-sdk-platform-23
+        file
         libgradle-android-plugin-java
+        libarchive-zip-perl
         strip-nondeterminism
 
 build_on_debian:
