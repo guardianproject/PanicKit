@@ -7,7 +7,7 @@ the panic response. The connections between trigger and receiver can be
 strictly enforced based on `packageName` and APK signing key.
 
 An overview of the PanicKit and how to use it is here:
-https://guardianproject.info/code/panickit
+<strike>https://guardianproject.info/code/panickit</strike> [page not found. ??? use one of these instead ?? https://guardianproject.info/2016/01/12/panickit-making-your-whole-phone-respond-to-a-panic-button/  ?? https://guardianproject.info/tag/panickit/ ]
 
 
 Downloads
